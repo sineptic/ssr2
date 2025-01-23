@@ -1,0 +1,12 @@
+[package]
+name = "ssr-core"
+description = "traits for spaced repetition libs"
+repository = "https://github.com/sineptic/ssr-core"
+license = "MIT"
+version = "0.38.0"
+edition = "2021"
+
+[dependencies]
+s_text_input_f = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"

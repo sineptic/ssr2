@@ -1,0 +1,9 @@
+[package]
+name = "s_text_input_f"
+description = "text input format"
+license = "MIT"
+version = "0.3.4"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }

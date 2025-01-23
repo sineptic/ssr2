@@ -1,0 +1,10 @@
+[package]
+name = "s_text_input_f-parser"
+description = "parser for sineptic text input format"
+license = "MIT"
+version = "0.2.0"
+edition = "2021"
+
+[dependencies]
+chumsky = "0.9"
+s_text_input_f = "0.3"
