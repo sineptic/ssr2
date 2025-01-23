@@ -4,7 +4,7 @@ description = "traits for spaced repetition libs"
 repository = "https://github.com/sineptic/ssr-core"
 license = "MIT"
 version = "0.38.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 s_text_input_f = "0.3"

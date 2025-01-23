@@ -4,7 +4,7 @@ fn test(input: &str) {
     let output = parse_blocks(input).unwrap();
     println!("------------------------------------------------------------------");
     println!("input: \n{input}");
-    // println!("{output:#?}");
+    println!("{output:#?}");
     println!();
 }
 
