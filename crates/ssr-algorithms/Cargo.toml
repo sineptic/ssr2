@@ -10,7 +10,6 @@ chrono = { version = "0.4", features = ["serde"] }
 fsrs = "1.4"
 itertools = "0.13"
 rand = "0.8"
-s_text_input_f = "0.3"
-serde = { version = "1.0", features = ["derive"] }
-ssr-core = "0.38"
-# ssr-core = { path = "../ssr-core/" }
+s_text_input_f.workspace = true
+serde.workspace = true
+ssr-core.workspace = true

@@ -7,10 +7,10 @@ edition = "2024"
 
 [dependencies]
 crossterm = "0.28"
-ratatui = "0.29"
+ratatui.workspace = true
 readonly = "0.2"
-s_text_input_f = "0.3"
-s_text_input_f-parser = "0.2"
+s_text_input_f.workspace = true
+s_text_input_f-parser.workspace = true
 
 [features]
 fast_tab_scroll = []

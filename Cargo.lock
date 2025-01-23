@@ -676,7 +676,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3538270d33cc669650c4b093848450d380def10c331d38c768e34cac80576e6e"
 dependencies = [
  "termcolor",
- "unicode-width 0.1.14",
+ "unicode-width",
 ]
 
 [[package]]
@@ -2457,23 +2457,23 @@ checksum = "c3d6831663a5098ea164f89cff59c6284e95f4e3c76ce9848d4529f5ccca9bde"
 
 [[package]]
 name = "ratatui"
-version = "0.29.0"
+version = "0.28.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eabd94c2f37801c20583fc49dd5cd6b0ba68c716787c2dd6ed18571e1e63117b"
+checksum = "fdef7f9be5c0122f890d58bdf4d964349ba6a6161f705907526d891efabba57d"
 dependencies = [
  "bitflags 2.8.0",
  "cassowary",
  "compact_str",
  "crossterm",
- "indoc",
  "instability",
  "itertools 0.13.0",
  "lru",
  "paste",
  "strum 0.26.3",
+ "strum_macros 0.26.4",
  "unicode-segmentation",
  "unicode-truncate",
- "unicode-width 0.2.0",
+ "unicode-width",
 ]
 
 [[package]]
@@ -2483,21 +2483,8 @@ dependencies = [
  "crossterm",
  "ratatui",
  "readonly",
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "s_text_input_f-parser 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "ratatui_inputs"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2b5acf7f083d608f39aa1c58ff6712426002ce132dc0169b15baf84949cde8a"
-dependencies = [
- "crossterm",
- "ratatui",
- "readonly",
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "s_text_input_f-parser 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "s_text_input_f",
+ "s_text_input_f-parser",
 ]
 
 [[package]]
@@ -2735,30 +2722,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "s_text_input_f"
-version = "0.3.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d1a7138a219871e8f16db868ca50e511947562d8b2f6a4aa7deab1ccd3e1284"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "s_text_input_f-parser"
 version = "0.2.0"
 dependencies = [
  "chumsky",
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "s_text_input_f-parser"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd0ace2136ea8dadfc507064bdd21d32e69986e96497526d99a477b26f17351f"
-dependencies = [
- "chumsky",
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "s_text_input_f",
 ]
 
 [[package]]
@@ -2999,13 +2967,13 @@ dependencies = [
  "clap",
  "crossterm",
  "ratatui",
- "ratatui_inputs 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "s_text_input_f-parser 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ratatui_inputs",
+ "s_text_input_f",
+ "s_text_input_f-parser",
  "serde_json",
- "ssr-algorithms 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "ssr-core 0.38.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "ssr-facade 0.10.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ssr-algorithms",
+ "ssr-core",
+ "ssr-facade",
  "tempfile",
 ]
 
@@ -3017,42 +2985,16 @@ dependencies = [
  "fsrs",
  "itertools 0.13.0",
  "rand",
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "s_text_input_f",
  "serde",
- "ssr-core 0.38.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "ssr-algorithms"
-version = "0.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "038f8b35fa29faa8a9c5179de7f3ee5247721561521272cb3ec2dd97c7d01591"
-dependencies = [
- "chrono",
- "fsrs",
- "itertools 0.13.0",
- "rand",
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde",
- "ssr-core 0.38.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ssr-core",
 ]
 
 [[package]]
 name = "ssr-core"
 version = "0.38.0"
 dependencies = [
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde",
- "thiserror",
-]
-
-[[package]]
-name = "ssr-core"
-version = "0.38.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22b7ffb8f0d02966851364e52220b3a815e903af831ede21256a4c60bf4a3ce4"
-dependencies = [
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "s_text_input_f",
  "serde",
  "thiserror",
 ]
@@ -3063,22 +3005,9 @@ version = "0.10.2"
 dependencies = [
  "itertools 0.13.0",
  "rand",
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "s_text_input_f",
  "serde",
- "ssr-core 0.38.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "ssr-facade"
-version = "0.10.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cab18eecaa9a628891d14836e50725e6c1793057a0fe8efc6b9897ed1887129d"
-dependencies = [
- "itertools 0.13.0",
- "rand",
- "s_text_input_f 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde",
- "ssr-core 0.38.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ssr-core",
 ]
 
 [[package]]
@@ -3436,7 +3365,7 @@ checksum = "b3644627a5af5fa321c95b9b235a72fd24cd29c648c2c379431e6628655627bf"
 dependencies = [
  "itertools 0.13.0",
  "unicode-segmentation",
- "unicode-width 0.1.14",
+ "unicode-width",
 ]
 
 [[package]]
@@ -3444,12 +3373,6 @@ name = "unicode-width"
 version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7dd6e30e90baa6f72411720665d41d89b9a3d039dc45b8faea1ddd07f617f6af"
-
-[[package]]
-name = "unicode-width"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fc81956842c57dac11422a97c3b8195a1ff727f06e85c84ed2e8aa277c9a0fd"
 
 [[package]]
 name = "unicode-xid"

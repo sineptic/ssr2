@@ -7,6 +7,6 @@ version = "0.38.0"
 edition = "2024"
 
 [dependencies]
-s_text_input_f = "0.3"
-serde = { version = "1.0", features = ["derive"] }
+s_text_input_f.workspace = true
+serde.workspace = true
 thiserror = "1.0"
