@@ -1,0 +1,7 @@
+[package]
+name = "telegram-interactions"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+s_text_input_f.workspace = true

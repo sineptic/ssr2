@@ -1,14 +1,14 @@
 use std::{
-    io::{stdout, Write},
+    io::{Write, stdout},
     process::ExitCode,
 };
 
-use anyhow::{ensure, Result};
+use anyhow::{Result, ensure};
 use clap::{Parser, Subcommand};
 use ratatui::{
+    Terminal,
     prelude::{CrosstermBackend, *},
     widgets::*,
-    Terminal,
 };
 use ratatui_inputs::ResultKind;
 use s_text_input_f::BlocksWithAnswer;
@@ -92,7 +92,7 @@ enum Submenu {
 }
 
 fn application(storage: &mut Facade) -> Result<()> {
-    let mut terminal = Terminal::new(CrosstermBackend::new(stdout())).unwrap();
+    let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
     let alt = alternate_screen_wrapper::AlternateScreen::enter()?.bracketed_paste()?;
 
     loop {
@@ -158,7 +158,8 @@ fn application(storage: &mut Facade) -> Result<()> {
                     f.render_widget(ratatui::widgets::Paragraph::new("Optimizing"), f.area());
                 })?;
                 if let Err(err) = storage.optimize() {
-                    todo!()
+                    save(PATH, storage)?;
+                    todo!("application can't handle error in optimization jet. Error: {err}");
                 }
             }
             Submenu::Save => save(PATH, storage)?,
