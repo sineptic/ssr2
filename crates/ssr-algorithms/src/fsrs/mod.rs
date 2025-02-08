@@ -1,6 +1,6 @@
 use std::time::SystemTime;
 
-use fsrs::{FSRSItem, FSRS};
+use fsrs::{FSRS, FSRSItem};
 use s_text_input_f as stif;
 use s_text_input_f::{BlocksWithAnswer, ParagraphItem};
 use serde::{Deserialize, Serialize};
@@ -104,13 +104,10 @@ impl ssr_core::task::Task<'_> for Task {
         let quality =
             self.complete_inner(user_answer, shared_state, desired_retention, interaction)?;
         if let Some(ref mut level) = self.level {
-            level.update(
-                shared_state,
-                RepetitionContext {
-                    quality,
-                    review_time,
-                },
-            );
+            level.update(shared_state, RepetitionContext {
+                quality,
+                review_time,
+            });
         } else {
             self.level = Some(Level::new(quality, review_time));
         }

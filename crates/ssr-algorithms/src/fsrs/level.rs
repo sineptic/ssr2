@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use fsrs::{FSRSItem, FSRSReview, FSRS};
+use fsrs::{FSRS, FSRSItem, FSRSReview};
 use serde::{Deserialize, Serialize};
 
 use super::Shared;

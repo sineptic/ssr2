@@ -2,9 +2,10 @@
 #![warn(clippy::too_many_lines)]
 #![allow(dead_code)] // FIXME: remove this
 
+use std::fmt::Write;
+
 use ratatui::text::Text;
 use s_text_input_f::Block;
-use std::fmt::Write;
 
 pub fn get_input(
     input_request: s_text_input_f::Blocks,
@@ -67,7 +68,7 @@ pub fn get_text_input(
         match multyline_input.get_input(&mut |x| render(x.style(), x.text()))? {
             ResultKind::Ok => return Ok((ResultKind::Ok, multyline_input.text().to_owned())),
             ResultKind::Canceled => {
-                return Ok((ResultKind::Canceled, multyline_input.text().to_owned()))
+                return Ok((ResultKind::Canceled, multyline_input.text().to_owned()));
             }
             ResultKind::NextBlock => (),
             ResultKind::PrevBlock => (),

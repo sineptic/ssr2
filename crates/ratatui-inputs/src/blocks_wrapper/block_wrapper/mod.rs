@@ -1,5 +1,6 @@
-use crate::ResultKind;
 use ratatui::text::Line;
+
+use crate::ResultKind;
 
 #[derive(Debug)]
 pub enum BlockWrapper {

@@ -1,5 +1,6 @@
-use super::ResultKind;
 use crossterm::event::{KeyCode, KeyEventKind};
+
+use super::ResultKind;
 
 #[derive(Default, Clone)]
 #[readonly::make]

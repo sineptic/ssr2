@@ -1,7 +1,7 @@
 use paragraph_item_wrapper::*;
 use ratatui::text::Line;
 
-use crate::{split_at_mid, ResultKind};
+use crate::{ResultKind, split_at_mid};
 #[derive(Debug)]
 pub struct ParagraphWrapper {
     items: Vec<ParagraphItemWrapper>,
@@ -163,8 +163,9 @@ fn get_input(
 }
 
 pub mod paragraph_item_wrapper {
-    use crate::{blank_field::BlankField, ResultKind};
     use ratatui::{style::Stylize, text::Span};
+
+    use crate::{ResultKind, blank_field::BlankField};
 
     #[derive(Debug)]
     pub enum ParagraphItemWrapper {

@@ -1,9 +1,10 @@
-use super::ResultKind;
 use crossterm::event::{KeyCode, KeyEventKind};
 use ratatui::{
     style::Stylize,
     text::{Line, Span, Text},
 };
+
+use super::ResultKind;
 
 #[derive(Default, Clone)]
 #[readonly::make]

@@ -3,7 +3,7 @@
 
 use std::time::{Duration, SystemTime};
 
-use rand::{thread_rng, Rng};
+use rand::{Rng, thread_rng};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use ssr_core::{
     task::{SharedStateExt, Task},

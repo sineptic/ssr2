@@ -1,7 +1,7 @@
 use block_wrapper::BlockWrapper;
 use ratatui::text::Text;
 
-use crate::{split_at_mid, ResultKind};
+use crate::{ResultKind, split_at_mid};
 
 #[derive(Debug)]
 pub struct BlocksWrapper {

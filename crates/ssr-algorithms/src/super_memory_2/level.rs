@@ -39,18 +39,14 @@ pub enum Quality {
 }
 impl Display for Quality {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(
-            f,
-            "{}",
-            match self {
-                Quality::CompleteBlackout => "complete blackout",
-                Quality::IncorrectResponseButCorrectRemembered => "correct remembered",
-                Quality::IncorrectResponseAndSeemedEasyToRecall => "seem easy to recall",
-                Quality::CorrectResponseRecalledWithSeriousDifficulty => "serious difficulty",
-                Quality::CorrectResponseAfterHesitation => "after hesitation",
-                Quality::PerfectResponse => "perfect",
-            }
-        )
+        writeln!(f, "{}", match self {
+            Quality::CompleteBlackout => "complete blackout",
+            Quality::IncorrectResponseButCorrectRemembered => "correct remembered",
+            Quality::IncorrectResponseAndSeemedEasyToRecall => "seem easy to recall",
+            Quality::CorrectResponseRecalledWithSeriousDifficulty => "serious difficulty",
+            Quality::CorrectResponseAfterHesitation => "after hesitation",
+            Quality::PerfectResponse => "perfect",
+        })
     }
 }
 

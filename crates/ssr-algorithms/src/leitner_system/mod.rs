@@ -3,7 +3,7 @@ use std::time::SystemTime;
 use level::Level;
 use s_text_input_f::BlocksWithAnswer;
 use serde::{Deserialize, Serialize};
-use ssr_core::task::{level::TaskLevel, Task};
+use ssr_core::task::{Task, level::TaskLevel};
 
 mod level;
 
