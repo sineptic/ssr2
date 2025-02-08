@@ -9,6 +9,8 @@ use ssr_core::task::level::TaskLevel;
 mod level;
 use level::{Level, Quality, RepetitionContext};
 
+pub mod stateless;
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Task {
     level: Option<Level>,
