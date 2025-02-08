@@ -1,9 +1,7 @@
 check:
     cargo fmt --check
     cargo clippy --all-features --quiet -- -Dwarnings
-
-publish: check
-    cargo publish
+    cargo test run --quiet --all-features
 
 fix:
     cargo fmt
