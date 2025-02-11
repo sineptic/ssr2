@@ -2,7 +2,7 @@ use std::{error::Error, time::SystemTime};
 
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 
-use crate::{BlocksDatabaseId, TaskDatabase};
+use crate::BlocksDatabaseId;
 
 pub mod level;
 
@@ -45,13 +45,14 @@ pub trait StatelessTask: Serialize + DeserializeOwned {
     /// If interaction return error.
     fn complete(
         &mut self,
+        is_correct: bool,
         shared_state: &mut Self::SharedState,
-        db: &impl TaskDatabase,
         desired_retention: f64,
         interaction: &mut impl FnMut(
             s_text_input_f::Blocks,
         ) -> std::io::Result<s_text_input_f::Response>,
     ) -> std::io::Result<()>;
+    fn get_id(&self) -> BlocksDatabaseId;
 }
 
 pub trait SharedState<'a>: Default + Serialize + Deserialize<'a> {}
