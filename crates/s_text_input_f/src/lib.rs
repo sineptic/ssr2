@@ -30,11 +30,28 @@ pub enum Block {
     Answered(BlockAnswered),
 }
 
+impl Block {
+    pub fn one_of<I>(items: I) -> Self
+    where
+        I: IntoIterator<Item = String>,
+    {
+        Self::OneOf(items.into_iter().collect())
+    }
+}
+
 pub type Paragraph = Vec<ParagraphItem>;
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum ParagraphItem {
     Text(String),
     Placeholder,
+}
+impl<T> From<T> for ParagraphItem
+where
+    T: Into<String>,
+{
+    fn from(value: T) -> Self {
+        Self::Text(value.into())
+    }
 }
 
 pub type Response = Vec<ResponseItem>;
