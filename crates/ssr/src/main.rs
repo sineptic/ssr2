@@ -15,7 +15,7 @@ use s_text_input_f::BlocksWithAnswer;
 use ssr_core::tasks_facade::TasksFacade;
 
 type Task = ssr_algorithms::fsrs::Task;
-type Facade<'a> = ssr_facade::Facade<'a, Task>;
+type Facade<'a> = ssr_facade::stateful::Facade<'a, Task>;
 
 #[derive(Parser, Debug)]
 struct Args {
