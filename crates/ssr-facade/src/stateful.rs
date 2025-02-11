@@ -158,9 +158,13 @@ impl<'a, T: Task<'a>> TasksFacade<'a, T> for Facade<'a, T> {
                 None => Err(ssr_core::tasks_facade::Error::NoTask),
             };
         };
-        task.complete(&mut self.state, self.desired_retention, &mut |blocks| {
+        let err = task.complete(&mut self.state, self.desired_retention, &mut |blocks| {
             interaction(id, blocks)
-        })?;
+        });
+        if let Err(err) = err {
+            self.tasks_pool.push(TaskWrapper { task, id });
+            return Err(err.into());
+        }
         self.tasks_pool.push(TaskWrapper { task, id });
         Ok(())
     }
