@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub enum TelegramInteraction {
     OneOf(Vec<String>),
     Text(String),
