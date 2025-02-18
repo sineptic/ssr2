@@ -2,6 +2,7 @@
 pub enum TelegramInteraction {
     OneOf(Vec<String>),
     Text(String),
+    UserInput,
 }
 
 impl From<TelegramInteraction> for s_text_input_f::Block {
@@ -11,12 +12,15 @@ impl From<TelegramInteraction> for s_text_input_f::Block {
             TelegramInteraction::Text(content) => {
                 s_text_input_f::Block::Paragraph(vec![s_text_input_f::ParagraphItem::Text(content)])
             }
+            TelegramInteraction::UserInput => {
+                s_text_input_f::Block::Paragraph(vec![s_text_input_f::ParagraphItem::Placeholder])
+            }
         }
     }
 }
 
 impl TryFrom<s_text_input_f::Block> for TelegramInteraction {
-    type Error = ();
+    type Error = &'static str;
 
     fn try_from(block: s_text_input_f::Block) -> Result<Self, Self::Error> {
         match block {
@@ -25,9 +29,10 @@ impl TryFrom<s_text_input_f::Block> for TelegramInteraction {
                 [s_text_input_f::ParagraphItem::Text(content)] => {
                     Ok(TelegramInteraction::Text(content.clone()))
                 }
-                _ => Err(()),
+                [s_text_input_f::ParagraphItem::Placeholder] => Ok(TelegramInteraction::UserInput),
+                _ => Err("Paragraph must contain exactly one item"),
             },
-            _ => Err(()),
+            _ => Err("Unsupported block type"),
         }
     }
 }
