@@ -15,6 +15,7 @@ jobs:
       - name: Use nightly version
         run: rustup override set nightly
           && rustup component add --toolchain nightly-x86_64-unknown-linux-gnu rustfmt clippy
+      - uses: Swatinem/rust-cache@v2
       - name: Check formatting
         run: cargo fmt --check
       - name: Linter
@@ -29,6 +30,7 @@ jobs:
       - name: Use nightly version
         run: rustup override set nightly
           && rustup component add rust-src --toolchain nightly
+      - uses: Swatinem/rust-cache@v2
       - name: Build
         run: cargo build --release -Z build-std
       - name: Upload build artifact
