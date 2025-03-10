@@ -70,7 +70,7 @@ impl ssr_core::task::SharedStateExt<'_, Task> for Shared {
         tasks.extend(extract_first_long_term_reviews(&tasks));
         let fsrs = FSRS::new(None)?;
         let best_params: [f32; 19] = fsrs
-            .compute_parameters(tasks, None)?
+            .compute_parameters(tasks, None, true)?
             .try_into()
             .expect("fsrs library should return exactly '19' weights");
         self.weights = best_params;

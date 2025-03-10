@@ -1,6 +1,6 @@
 use std::time::{Duration, SystemTime};
 
-use rand::{Rng, thread_rng};
+use rand::Rng;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use ssr_core::{
     task::{SharedStateExt, Task},
@@ -75,7 +75,7 @@ impl<'a, T: Task<'a>> Facade<'a, T> {
         if self.tasks_to_recall.is_empty() {
             return None;
         }
-        let index = thread_rng().gen_range(0..self.tasks_to_recall.len());
+        let index = rand::rng().random_range(0..self.tasks_to_recall.len());
         Some(self.tasks_to_recall.swap_remove(index))
     }
 

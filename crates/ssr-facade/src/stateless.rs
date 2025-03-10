@@ -1,6 +1,6 @@
 use std::time::{Duration, SystemTime};
 
-use rand::{Rng as _, thread_rng};
+use rand::Rng;
 use ssr_core::{BlocksDatabaseId, task::StatelessTask};
 
 pub struct Facade<T, U>
@@ -37,7 +37,7 @@ where
         if self.tasks_to_recall.is_empty() {
             return None;
         }
-        let index = thread_rng().gen_range(0..self.tasks_to_recall.len());
+        let index = rand::rng().random_range(0..self.tasks_to_recall.len());
         Some(self.tasks_to_recall.swap_remove(index))
     }
 

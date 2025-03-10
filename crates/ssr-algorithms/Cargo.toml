@@ -7,9 +7,12 @@ edition = "2024"
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
-fsrs = "1.4"
-itertools = "0.13"
-rand = "0.8"
+fsrs = "2.0.4"
+bincode = "=2.0.0-rc.3"                            # temporary
+bincode_derive = "=2.0.0-rc.3"                     # temporary
+
+itertools = "0.14"
+rand = "0.9"
 s_text_input_f.workspace = true
 serde.workspace = true
 ssr-core.workspace = true
