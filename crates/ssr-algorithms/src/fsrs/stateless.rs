@@ -53,10 +53,13 @@ impl ssr_core::task::StatelessTask for StatelessTask {
         };
 
         if let Some(ref mut level) = self.level {
-            level.update(shared_state, RepetitionContext {
-                quality,
-                review_time,
-            });
+            level.update(
+                shared_state,
+                RepetitionContext {
+                    quality,
+                    review_time,
+                },
+            );
         } else {
             self.level = Some(Level::new(quality, review_time));
         }

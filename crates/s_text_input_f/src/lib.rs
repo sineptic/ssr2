@@ -183,10 +183,13 @@ impl From<(Block, Vec<String>, Vec<String>)> for BlockAnswered {
                 paragraph_items
                     .iter_mut()
                     .filter(|x| {
-                        matches!(x, ParagraphItemAnswered::Answer {
-                            user_answer: _,
-                            correct_answer: _
-                        })
+                        matches!(
+                            x,
+                            ParagraphItemAnswered::Answer {
+                                user_answer: _,
+                                correct_answer: _
+                            }
+                        )
                     })
                     .zip(user_answer.into_iter().zip(correct_answer))
                     .for_each(|(answered, (user_answer, correct_answer))| {
