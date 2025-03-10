@@ -15,12 +15,13 @@ pub struct WriteAnswer {
 }
 
 impl WriteAnswer {
+    #[must_use]
     pub fn new(
         input_blocks: s_text_input_f::Blocks,
         correct_answer: s_text_input_f::Response,
     ) -> Self {
         Self {
-            level: Default::default(),
+            level: Level::default(),
             input_blocks,
             correct_answer,
         }
@@ -77,67 +78,64 @@ impl Task<'_> for WriteAnswer {
 
     fn complete(
         &mut self,
-        _: &mut (),
+        (): &mut (),
         _desired_retention: f64,
         interaction: &mut impl FnMut(
             s_text_input_f::Blocks,
         ) -> std::io::Result<s_text_input_f::Response>,
     ) -> std::io::Result<()> {
         let user_answer = interaction(self.input_blocks.clone())?;
-        match s_text_input_f::eq_response(&user_answer, &self.correct_answer, true, false) {
-            false => {
-                const QUALITIES: [Quality; 3] = [
-                    Quality::CompleteBlackout,
-                    Quality::IncorrectResponseButCorrectRemembered,
-                    Quality::IncorrectResponseAndSeemedEasyToRecall,
-                ];
-                let qualities_strings = vec![
-                    "complete blackout".to_string(),
-                    "incorrect response, but correct remembered".to_string(),
-                    "incorrect response, but seemed easy to recall".to_string(),
-                ];
-                let directive = "Choose difficulty:".to_string();
+        if s_text_input_f::eq_response(&user_answer, &self.correct_answer, true, false) {
+            const QUALITIES: [Quality; 3] = [
+                Quality::CorrectResponseRecalledWithSeriousDifficulty,
+                Quality::CorrectResponseAfterHesitation,
+                Quality::PerfectResponse,
+            ];
+            let qualities_strings = vec![
+                "recalled with serious difficulty".to_string(),
+                "correct, but after hesitation".to_string(),
+                "perfect response".to_string(),
+            ];
+            let directive = "All answers correct! Choose difficulty:".to_string();
 
-                let quality = self.get_feedback(
-                    user_answer,
-                    directive,
-                    qualities_strings,
-                    interaction,
-                    QUALITIES,
-                )?;
+            let quality = self.get_feedback(
+                user_answer,
+                directive,
+                qualities_strings,
+                interaction,
+                QUALITIES,
+            )?;
 
-                self.level.update(&mut (), (SystemTime::now(), quality));
-            }
-            true => {
-                const QUALITIES: [Quality; 3] = [
-                    Quality::CorrectResponseRecalledWithSeriousDifficulty,
-                    Quality::CorrectResponseAfterHesitation,
-                    Quality::PerfectResponse,
-                ];
-                let qualities_strings = vec![
-                    "recalled with serious difficulty".to_string(),
-                    "correct, but after hesitation".to_string(),
-                    "perfect response".to_string(),
-                ];
-                let directive = "All answers correct! Choose difficulty:".to_string();
+            self.level.update(&mut (), (SystemTime::now(), quality));
+        } else {
+            const QUALITIES: [Quality; 3] = [
+                Quality::CompleteBlackout,
+                Quality::IncorrectResponseButCorrectRemembered,
+                Quality::IncorrectResponseAndSeemedEasyToRecall,
+            ];
+            let qualities_strings = vec![
+                "complete blackout".to_string(),
+                "incorrect response, but correct remembered".to_string(),
+                "incorrect response, but seemed easy to recall".to_string(),
+            ];
+            let directive = "Choose difficulty:".to_string();
 
-                let quality = self.get_feedback(
-                    user_answer,
-                    directive,
-                    qualities_strings,
-                    interaction,
-                    QUALITIES,
-                )?;
+            let quality = self.get_feedback(
+                user_answer,
+                directive,
+                qualities_strings,
+                interaction,
+                QUALITIES,
+            )?;
 
-                self.level.update(&mut (), (SystemTime::now(), quality));
-            }
+            self.level.update(&mut (), (SystemTime::now(), quality));
         }
         Ok(())
     }
 
     fn new(input: s_text_input_f::BlocksWithAnswer) -> Self {
         Self {
-            level: Default::default(),
+            level: Level::default(),
             input_blocks: input.blocks,
             correct_answer: input.answer,
         }

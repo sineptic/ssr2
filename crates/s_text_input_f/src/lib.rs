@@ -56,7 +56,10 @@ where
 
 pub type Response = Vec<ResponseItem>;
 pub type ResponseItem = Vec<String>;
+#[must_use]
 pub fn eq_response(a: &Response, b: &Response, trim: bool, case_insensitive: bool) -> bool {
+    #![warn(clippy::pedantic)]
+    #![allow(clippy::wildcard_imports)]
     if a.len() != b.len() {
         return false;
     }
@@ -96,6 +99,8 @@ fn eq_response_item(
 
 /// # Returns
 /// Vec of (`initial_pos`, `current_pos`)
+/// # Errors
+/// Returns a `ParseIntError` if any of the response items cannot be parsed as a `usize`
 pub fn response_as_order(response: ResponseItem) -> Result<Vec<(usize, usize)>, ParseIntError> {
     response
         .into_iter()
@@ -107,18 +112,24 @@ pub fn response_as_order(response: ResponseItem) -> Result<Vec<(usize, usize)>, 
             vec
         })
 }
+
 /// # Returns
 /// `BTreeSet` of selected items
+/// # Errors
+/// Returns a `ParseIntError` if any of the response items cannot be parsed as a `usize`
 pub fn response_as_any_of(response: ResponseItem) -> Result<BTreeSet<usize>, ParseIntError> {
     response.into_iter().map(|s| s.parse()).collect()
 }
+
 /// # Errors
 /// - `None` if there not 1 element
 /// - `Some(ParseIntError)` if there not a number
+#[must_use]
 pub fn response_as_one_of(response: ResponseItem) -> Option<Result<usize, ParseIntError>> {
     let [val]: [String; 1] = response.try_into().ok()?;
     Some(val.parse())
 }
+#[must_use]
 pub fn response_as_placeholders(response: ResponseItem) -> Vec<String> {
     response
 }
@@ -204,6 +215,10 @@ impl From<(Block, Vec<String>, Vec<String>)> for BlockAnswered {
         }
     }
 }
+
+/// # Panics
+/// Panics if the length of `user_answers` does not match the length of `correct_answers`.
+#[must_use]
 pub fn to_answered(
     blocks: Blocks,
     user_answers: Response,

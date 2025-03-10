@@ -20,7 +20,7 @@ impl Default for Level {
         Self {
             e_factor: 2.5,
             strike: 1,
-            interval: Default::default(),
+            interval: Duration::default(),
             last_repetition: SystemTime::now(),
             repetition_required: false,
         }
@@ -57,7 +57,7 @@ impl Display for Quality {
 impl TaskLevel<'_> for Level {
     type SharedState = ();
     type Context = (SystemTime, Quality);
-    fn update(&mut self, _: &mut (), (now, quality): Self::Context) {
+    fn update(&mut self, (): &mut (), (now, quality): Self::Context) {
         self.last_repetition = now;
         const SECS_IN_DAY: u64 = 60 * 60 * 24;
 
@@ -84,7 +84,7 @@ impl TaskLevel<'_> for Level {
         );
     }
 
-    fn next_repetition(&self, _: &(), _retrievability_goal: f64) -> SystemTime {
+    fn next_repetition(&self, (): &(), _retrievability_goal: f64) -> SystemTime {
         if self.repetition_required {
             SystemTime::now()
         } else {

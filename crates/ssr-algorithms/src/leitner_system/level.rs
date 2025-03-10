@@ -21,7 +21,7 @@ impl Default for Level {
 impl TaskLevel<'_> for Level {
     type Context = (SystemTime, bool);
     type SharedState = ();
-    fn update(&mut self, _: &mut (), (now, is_correct): Self::Context) {
+    fn update(&mut self, (): &mut (), (now, is_correct): Self::Context) {
         self.last_repetition_time = now;
         if is_correct {
             self.group = (self.group + 1).clamp(1, 4);
@@ -30,7 +30,7 @@ impl TaskLevel<'_> for Level {
         }
     }
 
-    fn next_repetition(&self, _: &(), _: f64) -> SystemTime {
+    fn next_repetition(&self, (): &(), _: f64) -> SystemTime {
         const DAY: Duration = Duration::new(60 * 60 * 24, 0);
         self.last_repetition_time + DAY * self.group
     }

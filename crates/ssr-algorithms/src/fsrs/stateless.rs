@@ -47,9 +47,10 @@ impl ssr_core::task::StatelessTask for StatelessTask {
         let review_time = chrono::Local::now();
 
         let next_states = self.next_states(shared_state, desired_retention as f32);
-        let quality = match is_correct {
-            true => self.feedback_correct(next_states, interaction)?,
-            false => self.feedback_wrong(next_states, interaction)?,
+        let quality = if is_correct {
+            self.feedback_correct(&next_states, interaction)?
+        } else {
+            self.feedback_wrong(&next_states, interaction)?
         };
 
         if let Some(ref mut level) = self.level {
@@ -74,7 +75,7 @@ impl ssr_core::task::StatelessTask for StatelessTask {
 impl StatelessTask {
     fn feedback_correct(
         &self,
-        next_states: fsrs::NextStates,
+        next_states: &fsrs::NextStates,
         interaction: &mut impl FnMut(stif::Blocks) -> std::io::Result<stif::Response>,
     ) -> std::io::Result<Quality> {
         let qualities = [Quality::Hard, Quality::Good, Quality::Easy];
@@ -95,7 +96,7 @@ impl StatelessTask {
 
     fn feedback_wrong(
         &self,
-        next_states: fsrs::NextStates,
+        next_states: &fsrs::NextStates,
         interaction: &mut impl FnMut(stif::Blocks) -> std::io::Result<stif::Response>,
     ) -> std::io::Result<Quality> {
         interaction(vec![stif::Block::Paragraph(vec![
@@ -113,7 +114,7 @@ impl StatelessTask {
         let now = chrono::Local::now();
         let current_memory_state = self.level.as_ref().map(|l| l.memory_state(&fsrs));
         let days_elapsed =
-            level::sleeps_between(self.level.as_ref().map_or(now, |l| l.last_review), now)
+            level::sleeps_between(&self.level.as_ref().map_or(now, |l| l.last_review), &now)
                 .try_into()
                 .unwrap();
 

@@ -17,6 +17,8 @@ use ssr_core::tasks_facade::TasksFacade;
 type Task = ssr_algorithms::fsrs::Task;
 type Facade<'a> = ssr_facade::stateful::Facade<'a, Task>;
 
+const DEFAULT_DESIRED_RETENTION: f64 = 0.85;
+
 #[derive(Parser, Debug)]
 struct Args {
     #[command(subcommand)]
@@ -33,7 +35,6 @@ const PATH: &str = "storage.json";
 fn main() -> Result<ExitCode> {
     let args = Args::parse();
 
-    const DEFAULT_DESIRED_RETENTION: f64 = 0.85;
     let mut storage = {
         if std::fs::exists(PATH)? {
             let file = Box::new(std::fs::read_to_string(PATH)?).leak();

@@ -9,7 +9,7 @@ pub(crate) fn any_of_parser() -> impl Parser<char, CorrectAnyOf, Error = Simple<
     let eol = || choice((just('\n').ignored(), end().ignored()));
     let variant = || {
         take_until(eol())
-            .map(|(content, _)| content.into_iter().collect::<String>().trim().to_owned())
+            .map(|(content, ())| content.into_iter().collect::<String>().trim().to_owned())
     };
     let correct_variant = || just("- [x] ").ignore_then(variant()).map(|x| (true, x));
     let wrong_variant = || just("- [ ] ").ignore_then(variant()).map(|x| (false, x));

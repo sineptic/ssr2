@@ -54,7 +54,7 @@ impl ssr_core::task::level::TaskLevel<'_> for Level {
     fn update(&mut self, _shared_state: &mut Self::SharedState, context: Self::Context) {
         self.history.reviews.push(FSRSReview {
             rating: context.quality as u32,
-            delta_t: sleeps_between(self.last_review, context.review_time)
+            delta_t: sleeps_between(&self.last_review, &context.review_time)
                 .try_into()
                 .unwrap(),
         });
@@ -81,6 +81,6 @@ impl ssr_core::task::level::TaskLevel<'_> for Level {
     }
 }
 
-pub fn sleeps_between(first: impl chrono::Datelike, second: impl chrono::Datelike) -> i32 {
+pub fn sleeps_between(first: &impl chrono::Datelike, second: &impl chrono::Datelike) -> i32 {
     second.num_days_from_ce() - first.num_days_from_ce()
 }

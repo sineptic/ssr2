@@ -142,22 +142,23 @@ pub enum Correctness {
     OtherCorrect { index: usize },
 }
 impl Correctness {
+    #[must_use]
     pub fn is_correct(&self) -> bool {
         match self {
             Correctness::Wrong => false,
-            Correctness::DefaultCorrect => true,
-            Correctness::OtherCorrect { index: _ } => true,
+            Correctness::DefaultCorrect | Correctness::OtherCorrect { index: _ } => true,
         }
     }
 }
 
 impl Task {
+    #[must_use]
     pub fn new(
         input_blocks: s_text_input_f::Blocks,
         correct_answer: s_text_input_f::Response,
     ) -> Self {
         Self {
-            level: Default::default(),
+            level: Option::default(),
             input_blocks,
             correct_answer,
             other_answers: Vec::new(),
@@ -194,7 +195,7 @@ impl Task {
         interaction: &mut impl FnMut(
             Vec<s_text_input_f::Block>,
         ) -> Result<Vec<Vec<String>>, std::io::Error>,
-        qualities: Vec<T>,
+        qualities: &[T],
     ) -> Result<T, std::io::Error> {
         let feedback = self.gen_feedback_form(user_answer, directive, qualities_strings);
         let user_feedback = interaction(feedback)?;
@@ -213,9 +214,10 @@ impl Task {
         interaction: &mut impl FnMut(s_text_input_f::Blocks) -> std::io::Result<Vec<Vec<String>>>,
     ) -> std::io::Result<Quality> {
         let next_states = self.next_states(shared_state, retrievability_goal);
-        Ok(match self.correctness(&user_answer).is_correct() {
-            true => self.feedback_correct(user_answer, next_states, interaction)?,
-            false => self.feedback_wrong(user_answer, next_states, interaction)?,
+        Ok(if self.correctness(&user_answer).is_correct() {
+            self.feedback_correct(user_answer, &next_states, interaction)?
+        } else {
+            self.feedback_wrong(user_answer, &next_states, interaction)?
         })
     }
     fn correctness(&mut self, user_answer: &Vec<Vec<String>>) -> Correctness {
@@ -236,7 +238,7 @@ impl Task {
         fsrs.next_states(
             self.level.as_ref().map(|l| l.memory_state(&fsrs)),
             retrievability_goal as f32,
-            level::sleeps_between(self.level.as_ref().map_or(now, |l| l.last_review), now)
+            level::sleeps_between(&self.level.as_ref().map_or(now, |l| l.last_review), &now)
                 .try_into()
                 .unwrap(),
         )
@@ -246,7 +248,7 @@ impl Task {
     fn feedback_correct(
         &mut self,
         user_answer: Vec<Vec<String>>,
-        next_states: fsrs::NextStates,
+        next_states: &fsrs::NextStates,
         interaction: &mut impl FnMut(s_text_input_f::Blocks) -> std::io::Result<Vec<Vec<String>>>,
     ) -> std::io::Result<Quality> {
         let qualities = vec![Quality::Hard, Quality::Good, Quality::Easy];
@@ -261,14 +263,14 @@ impl Task {
             directive,
             qualities_strings,
             interaction,
-            qualities,
+            &qualities,
         )
     }
 
     fn feedback_wrong(
         &mut self,
         user_answer: Vec<Vec<String>>,
-        next_states: fsrs::NextStates,
+        next_states: &fsrs::NextStates,
         interaction: &mut impl FnMut(s_text_input_f::Blocks) -> std::io::Result<Vec<Vec<String>>>,
     ) -> std::io::Result<Quality> {
         #[derive(Clone, Copy)]
@@ -284,7 +286,7 @@ impl Task {
                 "It is actually correct".into(),
             ],
             interaction,
-            vec![Feedback::Wrong, Feedback::ActuallyCorrect],
+            &[Feedback::Wrong, Feedback::ActuallyCorrect],
         )?;
         match result {
             Feedback::Wrong => Ok(Quality::Again),
