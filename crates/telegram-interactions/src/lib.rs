@@ -1,8 +1,11 @@
+use std::path::PathBuf;
+
 #[derive(Debug, Clone)]
 pub enum TelegramInteraction {
     OneOf(Vec<String>),
     Text(String),
     UserInput,
+    Image(PathBuf),
 }
 
 impl From<TelegramInteraction> for s_text_input_f::Block {
@@ -14,6 +17,11 @@ impl From<TelegramInteraction> for s_text_input_f::Block {
             }
             TelegramInteraction::UserInput => {
                 s_text_input_f::Block::Paragraph(vec![s_text_input_f::ParagraphItem::Placeholder])
+            }
+            TelegramInteraction::Image(path) => {
+                s_text_input_f::Block::Paragraph(vec![s_text_input_f::ParagraphItem::Text(
+                    format!("image: {}", path.display()),
+                )])
             }
         }
     }
