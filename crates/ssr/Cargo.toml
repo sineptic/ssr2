@@ -3,6 +3,10 @@ name = "ssr"
 version = "0.5.1"
 edition = "2024"
 
+[profile.release]
+lto = true
+codegen-units = 1
+
 [dependencies]
 crossterm = "0.28"
 alternate_screen_wrapper = { version = "0.1", features = ["crossterm"] }
