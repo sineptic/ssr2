@@ -8,12 +8,24 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps: 
+    - uses: actions/checkout@v4
+    - name: Use nightly version
+      run: rustup override set nightly
+    - name: Check formatting
+      run: cargo fmt --check
+    - name: Linter
+      run: cargo clippy -- -Dwarnings
+    
   build:
     runs-on: ubuntu-latest
+    needs: check
 
     steps:
     - uses: actions/checkout@v4
-    - name: Use nightly compiler
+    - name: Use nightly version
       run: rustup override set nightly
     - name: Build
       run: cargo build 
