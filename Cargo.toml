@@ -9,7 +9,7 @@ members = [
     "crates/ssr-core",
     "crates/ssr-facade",
     "crates/s_text_input_f",
-    "crates/s_text_input_f-parser", "crates/telegram-interactions",
+    "crates/s_text_input_f-parser",
 ]
 default-members = ["crates/ssr"]
 
