@@ -31,11 +31,12 @@ pub enum Block {
 }
 
 impl Block {
-    pub fn one_of<I>(items: I) -> Self
+    pub fn one_of<I, S>(items: I) -> Self
     where
-        I: IntoIterator<Item = String>,
+        I: IntoIterator<Item = S>,
+        S: Into<String>,
     {
-        Self::OneOf(items.into_iter().collect())
+        Self::OneOf(items.into_iter().map(|item| item.into()).collect())
     }
 }
 

@@ -156,12 +156,13 @@ impl Task {
     pub fn new(
         input_blocks: s_text_input_f::Blocks,
         correct_answer: s_text_input_f::Response,
+        other_answers: Vec<s_text_input_f::Response>,
     ) -> Self {
         Self {
             level: Option::default(),
             input_blocks,
             correct_answer,
-            other_answers: Vec::new(),
+            other_answers,
         }
     }
     fn gen_feedback_form(

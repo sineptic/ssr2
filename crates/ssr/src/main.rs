@@ -54,7 +54,7 @@ fn main() -> Result<ExitCode> {
                             println!("Task must contain interactive elements.");
                             false
                         } else {
-                            let task = Task::new(blocks.blocks, blocks.answer);
+                            let task = Task::new(blocks.blocks, blocks.answer, Vec::new());
                             storage.insert(task);
                             println!("Task added");
                             true

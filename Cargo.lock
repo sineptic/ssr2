@@ -3196,6 +3196,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "ssr-one-of"
+version = "0.1.0"
+dependencies = [
+ "s_text_input_f",
+ "s_text_input_f-parser",
+ "serde_json",
+ "ssr-algorithms",
+ "ssr-core",
+ "ssr-facade",
+]
+
+[[package]]
 name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -4,17 +4,7 @@ codegen-units = 1
 
 [workspace]
 resolver = "3"
-members = [
-    "crates/ssr",
-    "crates/ratatui-inputs",
-
-    "crates/ssr-algorithms",
-
-    "crates/ssr-core",
-    "crates/ssr-facade",
-    "crates/s_text_input_f",
-    "crates/s_text_input_f-parser",
-]
+members = ["crates/*"]
 default-members = ["crates/ssr"]
 
 [workspace.dependencies]
