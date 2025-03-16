@@ -1,0 +1,94 @@
+# s_text_input_f-parser documentation
+
+## Overview
+
+Rust library that provides parsing for `s_text_input_f` format, which is mainly used for creating tasks for repetition.
+Supports blocks, single block and any variant of block parsing.
+
+add this to `Cargo.toml`
+```bash
+s_text_input_f-parser = { git = "https://github.com/sineptic/ssr2" }
+```
+
+## Provided types
+
+```any_of.rs
+pub struct CorrectAnyOf {
+    pub variants: Vec<String>,
+    pub correct: Vec<usize>,
+}
+```
+
+```one_of.rs
+pub struct CorrectOneOf {
+    pub variants: Vec<String>,
+    pub correct: usize,
+}
+```
+
+```paragraph.rs
+pub struct CorrectParagraph {
+    pub input: Paragraph,
+    pub answer: Vec<String>,
+}
+```
+
+```lib.rs
+pub struct CorrectBlock {
+    pub block: Block,
+    pub answer: Vec<String>,
+}
+```
+
+## Provided functions
+
+```lib.rs
+pub fn parse_paragraph(input: &str) -> Result<paragraph::CorrectParagraph, Vec<Simple<char>>>;
+
+pub fn parse_one_of(input: &str) -> Result<one_of::CorrectOneOf, Vec<Simple<char>>>;
+
+pub fn parse_any_of(input: &str) -> Result<any_of::CorrectAnyOf, Vec<Simple<char>>>;
+
+pub fn parse_block(input: &str) -> Result<CorrectBlock, Vec<Simple<char>>>;
+
+pub fn parse_blocks(input: &str) -> Result<s_text_input_f::BlocksWithAnswer, Vec<Simple<char>>>;
+```
+
+## Format
+
+```
+hello `world`!
+
+`precipice` - a very steep side of a cliff or a mountain
+
+precipice - a very `steep` side of a `cliff` or a `mountain`
+
+`in advance` - before a particular time, or before doing a particular thing
+
+in advance - `before` a particular time, or `before` doing a particular thing
+
+`consequence` - a result of a particular action or situation, often one that is bad or not convenient
+
+consequence - a `result` of a particular action or situation, often one that is `bad` or `not convenient`
+
+- [ ] not correct
+- [x] correct
+- [ ] not correct
+- [ ] not correct
+- [x] correct
+- [ ] not correct
+- [ ] not correct
+- [x] correct
+
+- not correct
+* correct
+- not correct
+- not correct
+
+- not one_of
+```
+
+parsed structure:
+```
+BlocksWithAnswer { blocks: [Paragraph([Text("hello "), Placeholder, Text("!")]), Paragraph([Placeholder, Text(" - a very steep side of a cliff or a mountain")]), Paragraph([Text("precipice - a very "), Placeholder, Text(" side of a "), Placeholder, Text(" or a "), Placeholder]), Paragraph([Placeholder, Text(" - before a particular time, or before doing a particular thing")]), Paragraph([Text("in advance - "), Placeholder, Text(" a particular time, or "), Placeholder, Text(" doing a particular thing")]), Paragraph([Placeholder, Text(" - a result of a particular action or situation, often one that is bad or not convenient")]), Paragraph([Text("consequence - a "), Placeholder, Text(" of a particular action or situation, often one that is "), Placeholder, Text(" or "), Placeholder]), AnyOf(["not correct", "correct", "not correct", "not correct", "correct", "not correct", "not correct", "correct"]), OneOf(["not correct", "correct", "not correct", "not correct"]), Paragraph([Text("- not one_of")])], answer: [["world"], ["precipice"], ["steep", "cliff", "mountain"], ["in advance"], ["before", "before"], ["consequence"], ["result", "bad", "not convenient"], ["1", "4", "7"], ["1"], []] }
+```

@@ -4,7 +4,8 @@ fn test(input: &str) {
     let output = parse_blocks(input).unwrap();
     println!("------------------------------------------------------------------");
     println!("input: \n{input}");
-    println!("{output:#?}");
+    println!();
+    println!("{output:?}");
     println!();
 }
 
@@ -13,12 +14,15 @@ fn main() {
 hello `world`!
 
 `precipice` - a very steep side of a cliff or a mountain
+
 precipice - a very `steep` side of a `cliff` or a `mountain`
 
 `in advance` - before a particular time, or before doing a particular thing
+
 in advance - `before` a particular time, or `before` doing a particular thing
 
 `consequence` - a result of a particular action or situation, often one that is bad or not convenient
+
 consequence - a `result` of a particular action or situation, often one that is `bad` or `not convenient`
 
 - [ ] not correct
