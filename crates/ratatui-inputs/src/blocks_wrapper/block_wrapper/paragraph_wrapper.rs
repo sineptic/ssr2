@@ -190,17 +190,10 @@ pub mod paragraph_item_wrapper {
             &mut self,
             render: &mut impl FnMut(Vec<Span>) -> std::io::Result<()>,
         ) -> Option<std::io::Result<ResultKind>> {
-            let a = self.as_placeholder()?;
-            Some((|| {
-                Ok(
-                    match a.get_input(&mut |c| render_active_blank_field(c, render))? {
-                        ResultKind::Ok => ResultKind::Ok,
-                        ResultKind::Canceled => ResultKind::Canceled,
-                        ResultKind::NextBlock => ResultKind::NextBlock,
-                        ResultKind::PrevBlock => ResultKind::PrevBlock,
-                    },
-                )
-            })())
+            Some(
+                self.as_placeholder()?
+                    .get_input(&mut |c| render_active_blank_field(c, render)),
+            )
         }
         pub fn as_spans(&self) -> Vec<Span> {
             match self {

@@ -10,6 +10,7 @@ pub struct BlankField {
     pub cursor: usize,
 }
 
+#[derive(Debug)]
 enum Event {
     AddChar(char),
     RemoveCurrentChar,
