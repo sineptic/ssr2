@@ -13,5 +13,7 @@ ssr-facade = { path = "crates/ssr-facade" }
 ssr-algorithms = { path = "crates/ssr-algorithms" }
 s_text_input_f = { path = "crates/s_text_input_f" }
 s_text_input_f-parser = { path = "crates/s_text_input_f-parser" }
+crossterm = "0.28"
 ratatui = "0.29.0"
 serde = { version = "1.0.0", features = ["derive"] }
+rand = "0.9"

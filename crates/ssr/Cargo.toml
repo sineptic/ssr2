@@ -4,7 +4,7 @@ version = "0.5.1"
 edition = "2024"
 
 [dependencies]
-crossterm = "0.28"
+crossterm.workspace = true
 alternate_screen_wrapper = { version = "0.1", features = ["crossterm"] }
 ratatui.workspace = true
 

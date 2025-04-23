@@ -7,7 +7,7 @@ edition = "2024"
 
 [dependencies]
 itertools = "0.14"
-rand = "0.9"
+rand.workspace = true
 s_text_input_f.workspace = true
 serde.workspace = true
 ssr-core.workspace = true

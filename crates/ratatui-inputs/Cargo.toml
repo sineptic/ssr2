@@ -6,7 +6,7 @@ version = "0.3.1"
 edition = "2024"
 
 [dependencies]
-crossterm = "0.28"
+crossterm.workspace = true
 ratatui.workspace = true
 readonly = "0.2"
 s_text_input_f.workspace = true
