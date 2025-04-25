@@ -65,7 +65,7 @@ impl MultilineInput {
                             match k.code {
                                 KeyCode::Backspace => Some(Event::RemoveCurrentChar),
                                 KeyCode::Enter => {
-                                    if k.modifiers.contains(crossterm::event::KeyModifiers::ALT) {
+                                    if k.modifiers.contains(crossterm::event::KeyModifiers::SHIFT) {
                                         Some(Event::Finish)
                                     } else {
                                         Some(Event::AddChar('\n'))
