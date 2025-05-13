@@ -4,16 +4,15 @@ use fsrs::{FSRS, FSRSItem};
 use s_text_input_f as stif;
 use s_text_input_f::{BlocksWithAnswer, ParagraphItem};
 use serde::{Deserialize, Serialize};
-use ssr_core::task::level::TaskLevel;
 
-mod level;
+pub mod level;
 use level::{Level, Quality, RepetitionContext};
 
 pub mod stateless;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Task {
-    level: Option<Level>,
+    level: level::Level,
     input_blocks: s_text_input_f::Blocks,
     correct_answer: s_text_input_f::Response,
     #[serde(default)]
@@ -63,7 +62,7 @@ impl ssr_core::task::SharedStateExt<'_, Task> for Shared {
     {
         let mut tasks = tasks
             .into_iter()
-            .filter_map(|t| t.level.as_ref())
+            .filter_map(|t| t.level.as_started())
             .map(|x| x.history.clone())
             .filter(|x| x.reviews.iter().any(|r| r.delta_t != 0))
             .collect::<Vec<_>>();
@@ -86,11 +85,8 @@ impl ssr_core::task::Task<'_> for Task {
         shared_state: &Self::SharedState,
         retrievability_goal: f64,
     ) -> SystemTime {
-        if let Some(ref level) = self.level {
-            level.next_repetition(shared_state, retrievability_goal)
-        } else {
-            SystemTime::UNIX_EPOCH
-        }
+        self.level
+            .get_next_repetition(&level::fsrs(shared_state), retrievability_goal)
     }
 
     fn complete(
@@ -105,23 +101,16 @@ impl ssr_core::task::Task<'_> for Task {
         let user_answer = interaction(self.input_blocks.clone())?;
         let quality =
             self.complete_inner(user_answer, shared_state, desired_retention, interaction)?;
-        if let Some(ref mut level) = self.level {
-            level.update(
-                shared_state,
-                RepetitionContext {
-                    quality,
-                    review_time,
-                },
-            );
-        } else {
-            self.level = Some(Level::new(quality, review_time));
-        }
+        self.level.add_repetition(RepetitionContext {
+            quality,
+            review_time,
+        });
         Ok(())
     }
 
     fn new(input: s_text_input_f::BlocksWithAnswer) -> Self {
         Self {
-            level: None,
+            level: Level::default(),
             input_blocks: input.blocks,
             correct_answer: input.answer,
             other_answers: Vec::new(),
@@ -159,7 +148,7 @@ impl Task {
         other_answers: Vec<s_text_input_f::Response>,
     ) -> Self {
         Self {
-            level: Option::default(),
+            level: Level::default(),
             input_blocks,
             correct_answer,
             other_answers,
@@ -236,14 +225,8 @@ impl Task {
     fn next_states(&self, shared: &Shared, retrievability_goal: f64) -> fsrs::NextStates {
         let fsrs = level::fsrs(shared);
         let now = chrono::Local::now();
-        fsrs.next_states(
-            self.level.as_ref().map(|l| l.memory_state(&fsrs)),
-            retrievability_goal as f32,
-            level::sleeps_between(&self.level.as_ref().map_or(now, |l| l.last_review), &now)
-                .try_into()
-                .unwrap(),
-        )
-        .unwrap()
+        self.level
+            .next_states(&fsrs, retrievability_goal as f32, now)
     }
 
     fn feedback_correct(

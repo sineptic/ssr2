@@ -2,7 +2,7 @@ use std::time::SystemTime;
 
 use s_text_input_f as stif;
 use serde::{Deserialize, Serialize};
-use ssr_core::{BlocksDatabaseId, task::level::TaskLevel as _};
+use ssr_core::BlocksDatabaseId;
 
 use super::{
     Shared,
@@ -11,7 +11,7 @@ use super::{
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct StatelessTask {
-    level: Option<Level>,
+    level: Level,
     task_id: BlocksDatabaseId,
 }
 
@@ -20,7 +20,7 @@ impl ssr_core::task::StatelessTask for StatelessTask {
 
     fn new(id: BlocksDatabaseId) -> Self {
         Self {
-            level: None,
+            level: Level::default(),
             task_id: id,
         }
     }
@@ -30,11 +30,8 @@ impl ssr_core::task::StatelessTask for StatelessTask {
         shared_state: &Self::SharedState,
         retrievability_goal: f64,
     ) -> SystemTime {
-        if let Some(ref level) = self.level {
-            level.next_repetition(shared_state, retrievability_goal)
-        } else {
-            SystemTime::UNIX_EPOCH
-        }
+        self.level
+            .get_next_repetition(&level::fsrs(shared_state), retrievability_goal)
     }
 
     fn complete(
@@ -53,17 +50,10 @@ impl ssr_core::task::StatelessTask for StatelessTask {
             self.feedback_wrong(&next_states, interaction)?
         };
 
-        if let Some(ref mut level) = self.level {
-            level.update(
-                shared_state,
-                RepetitionContext {
-                    quality,
-                    review_time,
-                },
-            );
-        } else {
-            self.level = Some(Level::new(quality, review_time));
-        }
+        self.level.add_repetition(RepetitionContext {
+            quality,
+            review_time,
+        });
         Ok(())
     }
 
@@ -112,13 +102,6 @@ impl StatelessTask {
     fn next_states(&self, shared: &Shared, desired_retention: f32) -> fsrs::NextStates {
         let fsrs = level::fsrs(shared);
         let now = chrono::Local::now();
-        let current_memory_state = self.level.as_ref().map(|l| l.memory_state(&fsrs));
-        let days_elapsed =
-            level::sleeps_between(&self.level.as_ref().map_or(now, |l| l.last_review), &now)
-                .try_into()
-                .unwrap();
-
-        fsrs.next_states(current_memory_state, desired_retention, days_elapsed)
-            .unwrap()
+        self.level.next_states(&fsrs, desired_retention, now)
     }
 }
