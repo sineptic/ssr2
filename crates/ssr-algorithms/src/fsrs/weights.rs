@@ -1,4 +1,3 @@
-
 use fsrs::{FSRS, FSRSItem};
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
@@ -52,9 +51,7 @@ impl ssr_core::task::SharedStateExt<'_, Task> for Weights {
     {
         let mut tasks = tasks
             .into_iter()
-            .filter_map(|t| t.level.as_started())
-            .map(|x| x.history.clone())
-            .filter(|x| x.reviews.iter().any(|r| r.delta_t != 0))
+            .filter_map(|t| t.level.history())
             .collect::<Vec<_>>();
         tasks.extend(extract_first_long_term_reviews(&tasks));
         let fsrs = FSRS::new(None)?;

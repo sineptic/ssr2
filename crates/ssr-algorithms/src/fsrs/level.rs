@@ -12,9 +12,14 @@ pub enum Quality {
     Good = 3,
     Easy = 4,
 }
+pub struct RepetitionContext {
+    pub quality: Quality,
+    pub review_time: chrono::DateTime<chrono::Local>,
+}
 
 #[derive(Default, Serialize, Deserialize, Debug, Clone)]
 pub enum Level {
+    #[allow(private_interfaces)]
     Started(StartedLevel),
     #[default]
     NotStarted,
@@ -53,26 +58,26 @@ impl Level {
         }
     }
 
-    pub fn as_started(&self) -> Option<&StartedLevel> {
-        if let Self::Started(v) = self {
-            Some(v)
-        } else {
-            None
+    pub fn history(&self) -> Option<FSRSItem> {
+        match self {
+            Level::Started(level) => {
+                if level.history.reviews.iter().any(|r| r.delta_t != 0) {
+                    Some(level.history.clone())
+                } else {
+                    None
+                }
+            }
+            Level::NotStarted => None,
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct StartedLevel {
-    pub(crate) last_quality: Quality,
-    pub(crate) last_review: chrono::DateTime<chrono::Local>,
-    pub(crate) history: FSRSItem,
+struct StartedLevel {
+    last_quality: Quality,
+    last_review: chrono::DateTime<chrono::Local>,
+    history: FSRSItem,
 }
-pub struct RepetitionContext {
-    pub quality: Quality,
-    pub review_time: chrono::DateTime<chrono::Local>,
-}
-
 impl StartedLevel {
     fn new(quality: Quality, review_time: chrono::DateTime<chrono::Local>) -> Self {
         Self {
