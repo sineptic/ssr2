@@ -4,8 +4,6 @@ use chrono::{DateTime, Local};
 use fsrs::{FSRS, FSRSItem, FSRSReview};
 use serde::{Deserialize, Serialize};
 
-use super::Shared;
-
 #[derive(Clone, Copy, Serialize, Deserialize, Debug)]
 #[repr(u32)]
 pub enum Quality {
@@ -34,9 +32,9 @@ impl Level {
         }
     }
 
-    pub fn get_next_repetition(&self, fsrs: &FSRS, retrievability_goal: f64) -> SystemTime {
+    pub fn next_repetition(&self, fsrs: &FSRS, retrievability_goal: f64) -> SystemTime {
         match self {
-            Level::Started(level) => level.get_next_repetition(fsrs, retrievability_goal),
+            Level::Started(level) => level.next_repetition(fsrs, retrievability_goal),
             Level::NotStarted => SystemTime::UNIX_EPOCH,
         }
     }
@@ -75,12 +73,8 @@ pub struct RepetitionContext {
     pub review_time: chrono::DateTime<chrono::Local>,
 }
 
-pub(crate) fn fsrs(shared: &Shared) -> FSRS {
-    FSRS::new(Some(&shared.weights)).unwrap()
-}
-
 impl StartedLevel {
-    pub fn new(quality: Quality, review_time: chrono::DateTime<chrono::Local>) -> Self {
+    fn new(quality: Quality, review_time: chrono::DateTime<chrono::Local>) -> Self {
         Self {
             last_quality: quality,
             last_review: review_time,
@@ -92,10 +86,10 @@ impl StartedLevel {
             },
         }
     }
-    pub fn memory_state(&self, fsrs: &FSRS) -> fsrs::MemoryState {
+    fn memory_state(&self, fsrs: &FSRS) -> fsrs::MemoryState {
         fsrs.memory_state(self.history.clone(), None).unwrap()
     }
-    pub fn add_repetition(&mut self, repetition: RepetitionContext) {
+    fn add_repetition(&mut self, repetition: RepetitionContext) {
         self.history.reviews.push(FSRSReview {
             rating: repetition.quality as u32,
             delta_t: sleeps_between(&self.last_review, &repetition.review_time)
@@ -105,7 +99,7 @@ impl StartedLevel {
         self.last_quality = repetition.quality;
         self.last_review = repetition.review_time;
     }
-    pub fn get_next_repetition(&self, fsrs: &FSRS, retrievability_goal: f64) -> SystemTime {
+    fn next_repetition(&self, fsrs: &FSRS, retrievability_goal: f64) -> SystemTime {
         let interval_in_days = fsrs.next_interval(
             Some(self.memory_state(fsrs).stability),
             retrievability_goal as f32,
@@ -116,7 +110,7 @@ impl StartedLevel {
 
         SystemTime::from(self.last_review) + interval
     }
-    pub fn next_states(
+    fn next_states(
         &self,
         fsrs: &FSRS,
         retrievability_goal: f32,
@@ -128,24 +122,6 @@ impl StartedLevel {
             sleeps_between(&self.last_review, &now).try_into().unwrap(),
         )
         .unwrap()
-    }
-}
-impl ssr_core::task::level::TaskLevel<'_> for StartedLevel {
-    type Context = RepetitionContext;
-
-    type SharedState = super::Shared;
-
-    fn update(&mut self, _shared_state: &mut Self::SharedState, repetition_context: Self::Context) {
-        self.add_repetition(repetition_context);
-    }
-
-    fn next_repetition(
-        &self,
-        shared_state: &Self::SharedState,
-        retrievability_goal: f64,
-    ) -> std::time::SystemTime {
-        let fsrs = fsrs(shared_state);
-        self.get_next_repetition(&fsrs, retrievability_goal)
     }
 }
 

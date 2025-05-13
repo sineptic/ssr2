@@ -5,8 +5,8 @@ use serde::{Deserialize, Serialize};
 use ssr_core::BlocksDatabaseId;
 
 use super::{
-    Shared,
-    level::{self, Level, Quality, RepetitionContext},
+    level::{Level, Quality, RepetitionContext},
+    weights::Weights,
 };
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -16,7 +16,7 @@ pub struct StatelessTask {
 }
 
 impl ssr_core::task::StatelessTask for StatelessTask {
-    type SharedState = Shared;
+    type SharedState = Weights;
 
     fn new(id: BlocksDatabaseId) -> Self {
         Self {
@@ -25,13 +25,9 @@ impl ssr_core::task::StatelessTask for StatelessTask {
         }
     }
 
-    fn next_repetition(
-        &self,
-        shared_state: &Self::SharedState,
-        retrievability_goal: f64,
-    ) -> SystemTime {
+    fn next_repetition(&self, weights: &Weights, retrievability_goal: f64) -> SystemTime {
         self.level
-            .get_next_repetition(&level::fsrs(shared_state), retrievability_goal)
+            .next_repetition(&weights.fsrs(), retrievability_goal)
     }
 
     fn complete(
@@ -99,9 +95,9 @@ impl StatelessTask {
         Ok(Quality::Again)
     }
 
-    fn next_states(&self, shared: &Shared, desired_retention: f32) -> fsrs::NextStates {
-        let fsrs = level::fsrs(shared);
+    fn next_states(&self, weights: &Weights, desired_retention: f32) -> fsrs::NextStates {
         let now = chrono::Local::now();
-        self.level.next_states(&fsrs, desired_retention, now)
+        self.level
+            .next_states(&weights.fsrs(), desired_retention, now)
     }
 }

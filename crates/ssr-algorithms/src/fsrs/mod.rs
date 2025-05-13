@@ -1,12 +1,12 @@
 use std::time::SystemTime;
 
-use fsrs::{FSRS, FSRSItem};
 use s_text_input_f as stif;
 use s_text_input_f::{BlocksWithAnswer, ParagraphItem};
 use serde::{Deserialize, Serialize};
 
 pub mod level;
 use level::{Level, Quality, RepetitionContext};
+use weights::Weights;
 
 pub mod stateless;
 
@@ -19,74 +19,14 @@ pub struct Task {
     other_answers: Vec<s_text_input_f::Response>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Shared {
-    weights: [f32; 19],
-}
-impl Default for Shared {
-    fn default() -> Self {
-        Self {
-            weights: fsrs::DEFAULT_PARAMETERS,
-        }
-    }
-}
-impl ssr_core::task::SharedState<'_> for Shared {}
-use itertools::Itertools;
-fn extract_first_long_term_reviews<'a>(
-    items: impl IntoIterator<Item = &'a FSRSItem>,
-) -> Vec<FSRSItem> {
-    items
-        .into_iter()
-        .filter_map(|i| {
-            let a = i
-                .reviews
-                .iter()
-                .take_while_inclusive(|r| r.delta_t < 1)
-                .copied()
-                .collect_vec();
-            if a.last()?.delta_t < 1 || a.len() == i.reviews.len() {
-                return None;
-            }
-            Some(FSRSItem { reviews: a })
-        })
-        .collect()
-}
-
-impl ssr_core::task::SharedStateExt<'_, Task> for Shared {
-    fn optimize<'b>(
-        &mut self,
-        tasks: impl IntoIterator<Item = &'b Task>,
-    ) -> Result<(), Box<dyn std::error::Error>>
-    where
-        Task: 'b,
-    {
-        let mut tasks = tasks
-            .into_iter()
-            .filter_map(|t| t.level.as_started())
-            .map(|x| x.history.clone())
-            .filter(|x| x.reviews.iter().any(|r| r.delta_t != 0))
-            .collect::<Vec<_>>();
-        tasks.extend(extract_first_long_term_reviews(&tasks));
-        let fsrs = FSRS::new(None)?;
-        let best_params: [f32; 19] = fsrs
-            .compute_parameters(tasks, None, true)?
-            .try_into()
-            .expect("fsrs library should return exactly '19' weights");
-        self.weights = best_params;
-        Ok(())
-    }
-}
+pub mod weights;
 
 impl ssr_core::task::Task<'_> for Task {
-    type SharedState = Shared;
+    type SharedState = Weights;
 
-    fn next_repetition(
-        &self,
-        shared_state: &Self::SharedState,
-        retrievability_goal: f64,
-    ) -> SystemTime {
+    fn next_repetition(&self, shared_state: &Weights, retrievability_goal: f64) -> SystemTime {
         self.level
-            .get_next_repetition(&level::fsrs(shared_state), retrievability_goal)
+            .next_repetition(&shared_state.fsrs(), retrievability_goal)
     }
 
     fn complete(
@@ -199,7 +139,7 @@ impl Task {
     fn complete_inner(
         &mut self,
         user_answer: Vec<Vec<String>>,
-        shared_state: &Shared,
+        shared_state: &Weights,
         retrievability_goal: f64,
         interaction: &mut impl FnMut(s_text_input_f::Blocks) -> std::io::Result<Vec<Vec<String>>>,
     ) -> std::io::Result<Quality> {
@@ -222,11 +162,12 @@ impl Task {
         Correctness::Wrong
     }
 
-    fn next_states(&self, shared: &Shared, retrievability_goal: f64) -> fsrs::NextStates {
-        let fsrs = level::fsrs(shared);
-        let now = chrono::Local::now();
-        self.level
-            .next_states(&fsrs, retrievability_goal as f32, now)
+    fn next_states(&self, weights: &Weights, retrievability_goal: f64) -> fsrs::NextStates {
+        self.level.next_states(
+            &weights.fsrs(),
+            retrievability_goal as f32,
+            chrono::Local::now(),
+        )
     }
 
     fn feedback_correct(
