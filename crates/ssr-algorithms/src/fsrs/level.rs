@@ -4,7 +4,7 @@ use chrono::{DateTime, Local};
 use fsrs::{FSRS, FSRSItem, FSRSReview};
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Serialize, Deserialize, Debug)]
+#[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq, Eq)]
 #[repr(u32)]
 pub enum Quality {
     Again = 1,
@@ -68,6 +68,12 @@ impl Level {
                 }
             }
             Level::NotStarted => None,
+        }
+    }
+    pub fn failed(&self) -> bool {
+        match self {
+            Self::NotStarted => false,
+            Self::Started(level) => level.last_quality == Quality::Again,
         }
     }
 }
